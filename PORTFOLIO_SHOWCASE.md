@@ -2,7 +2,7 @@
 
 ## Project Summary
 
-**Live Demo:** https://convective-risk-analyzer.streamlit.app *(update after deployment)*
+**Live Demo:** https://convective-risk-analyzer.streamlit.app
 
 **Category:** Operational Meteorology | Aviation Safety | Real-time Decision Support
 
