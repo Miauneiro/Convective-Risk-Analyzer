@@ -45,16 +45,16 @@ class ConvectiveIndices:
     def to_dict(self) -> Dict:
         """Convert to dictionary for serialization"""
         return {
-            'cape': round(self.cape, 1),
-            'cin': round(self.cin, 1),
-            'lcl_pressure': round(self.lcl_pressure, 1),
-            'lcl_temperature': round(self.lcl_temperature, 1),
-            'lfc_pressure': round(self.lfc_pressure, 1) if self.lfc_pressure else None,
-            'lfc_temperature': round(self.lfc_temperature, 1) if self.lfc_temperature else None,
-            'el_pressure': round(self.el_pressure, 1) if self.el_pressure else None,
-            'el_temperature': round(self.el_temperature, 1) if self.el_temperature else None,
-            'surface_temperature': round(self.surface_temperature, 1),
-            'surface_dewpoint': round(self.surface_dewpoint, 1),
+            'cape': float(round(self.cape, 1)),
+            'cin': float(round(self.cin, 1)),
+            'lcl_pressure': float(round(self.lcl_pressure, 1)),
+            'lcl_temperature': float(round(self.lcl_temperature, 1)),
+            'lfc_pressure': float(round(self.lfc_pressure, 1)) if self.lfc_pressure else None,
+            'lfc_temperature': float(round(self.lfc_temperature, 1)) if self.lfc_temperature else None,
+            'el_pressure': float(round(self.el_pressure, 1)) if self.el_pressure else None,
+            'el_temperature': float(round(self.el_temperature, 1)) if self.el_temperature else None,
+            'surface_temperature': float(round(self.surface_temperature, 1)),
+            'surface_dewpoint': float(round(self.surface_dewpoint, 1)),
         }
 
 

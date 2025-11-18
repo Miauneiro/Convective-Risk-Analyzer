@@ -321,24 +321,62 @@ class SoundingValidator:
                 print(f"  ! {warning}")
 
 
-def load_example_sounding() -> SoundingData:
+def load_example_sounding(risk_level: str = "high") -> SoundingData:
     """
     Load example sounding data for testing
     
+    Args:
+        risk_level: "low", "moderate", or "high" risk scenario
+    
     Returns:
-        SoundingData object with synthetic unstable atmosphere
+        SoundingData object with atmospheric profile from Wyoming format files
     """
-    # Create realistic unstable sounding
-    pressure = np.array([1013, 1000, 975, 950, 925, 900, 850, 800, 750, 700, 
-                        650, 600, 550, 500, 450, 400, 350, 300, 250, 200])
+    # Map risk levels to Wyoming format files
+    file_map = {
+        "low": "data/low_risk_example.txt",
+        "moderate": "data/moderate_risk_example.txt",
+        "high": "data/high_risk_example.txt"
+    }
     
-    # Temperature: standard lapse rate with surface heating
-    temperature = np.array([30, 28, 25, 23, 21, 19, 15, 11, 7, 3, 
-                           -1, -5, -9, -13, -17, -21, -27, -35, -45, -56])
+    filepath = file_map.get(risk_level, "data/moderate_risk_example.txt")
     
-    # Dewpoint: moist near surface, drying aloft
-    dewpoint = np.array([24, 22, 20, 18, 16, 14, 10, 6, 2, -2,
-                        -6, -10, -14, -18, -22, -26, -32, -40, -50, -60])
+    try:
+        # Try to load from Wyoming format file
+        return SoundingLoader.from_wyoming(filepath)
+    except Exception as e:
+        # Fallback to synthetic sounding if file not found
+        if risk_level == "low":
+            # Strong cap, minimal CAPE - safe flying conditions
+            pressure = np.array([1013, 1000, 975, 950, 925, 900, 850, 800, 750, 700, 
+                                650, 600, 550, 500, 450, 400, 350, 300, 250, 200])
+            
+            temperature = np.array([10, 9, 7, 5, 3, 1, -2, -5, -8, -11,
+                                   -14, -17.5, -21, -25, -29.5, -34.5, -40, -46.5, -54, -62])
+            
+            dewpoint = np.array([-5, -5.5, -6, -6.5, -7, -8, -10, -12, -14, -16,
+                                -18.5, -21.5, -25, -29, -33.5, -38.5, -44, -50.5, -58, -66])
+        
+        elif risk_level == "moderate":
+            # Weak cap, moderate CAPE - typical summer day
+            pressure = np.array([1000, 975, 950, 925, 900, 850, 800, 750, 700, 650,
+                                600, 550, 500, 450, 400, 350, 300, 250, 200])
+            
+            temperature = np.array([26, 24, 22, 20, 18, 14, 10, 6, 2, -2,
+                                   -6, -10.5, -15, -20, -25.5, -31.5, -38.5, -46.5, -55.5])
+            
+            dewpoint = np.array([18, 17, 16, 15, 14, 11, 8, 4, 0, -4,
+                                -9, -14.5, -20, -26, -32.5, -39.5, -47.5, -56.5, -66.5])
+        
+        else:  # high risk
+            # No cap, high CAPE - severe thunderstorm potential
+            pressure = np.array([1000, 975, 950, 925, 900, 850, 800, 750, 700, 650, 
+                                600, 550, 500, 450, 400, 350, 300, 250, 200])
+            
+            temperature = np.array([28, 26, 24, 22, 20, 16, 12, 8, 4, 0,
+                                   -4, -8, -12, -17, -22, -28, -35, -44, -54])
+            
+            dewpoint = np.array([22, 20, 18, 16, 14, 10, 6, 2, -2, -6,
+                                -10, -14, -18, -23, -28, -34, -41, -50, -60])
     
     return SoundingData(
         pressure=pressure,

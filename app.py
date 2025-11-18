@@ -202,26 +202,50 @@ def main():
                 st.sidebar.info("Please ensure file is in Wyoming or CSV format")
     
     elif input_method == "Use Example Data":
-        sounding = load_example_sounding()
-        st.sidebar.success("✓ Loaded example unstable sounding")
-        st.sidebar.info("This is a synthetic sounding with strong convective potential")
+        example_type = st.sidebar.selectbox(
+            "Select Scenario:",
+            ["Low Risk (Safe Flying)", "Moderate Risk (Typical Summer)", "High Risk (Severe Weather)", "Extreme Risk (Dangerous Conditions)"],
+            help="Choose different convective scenarios to see how risk assessments change"
+        )
+        
+        # Map selection to risk level
+        risk_map = {
+            "Low Risk (Safe Flying)": "low",
+            "Moderate Risk (Typical Summer)": "moderate",
+            "High Risk (Severe Weather)": "high",
+            "Extreme Risk (Dangerous Conditions)": "extreme"
+        }
+        
+        risk_level = risk_map[example_type]
+        sounding = load_example_sounding(risk_level)
+        
+        st.sidebar.success(f"✓ Loaded {example_type.lower()} sounding")
+        
+        # Show scenario description
+        descriptions = {
+            "low": "Strong capping inversion limits convection. Excellent soaring conditions with thermal control.",
+            "moderate": "Weak cap with moderate CAPE. Typical summer afternoon - monitor cloud development.",
+            "high": "No significant cap with high CAPE. Severe thunderstorm potential - dangerous conditions.",
+            "extreme": "Very high CAPE and shear. Extreme weather likely - avoid all flight operations."
+        }
+        st.sidebar.info(descriptions[risk_level])
     
     elif input_method == "Manual Entry":
-        st.sidebar.info("Enter comma-separated values for each level")
+        st.sidebar.info("Enter comma-separated values for each level (minimum 10 levels recommended)")
         
         pressure_input = st.sidebar.text_area(
             "Pressure (hPa)",
-            "1000,950,900,850,800,700,500,300",
+            "1000,950,900,850,800,750,700,650,600,550",
             height=80
         )
         temp_input = st.sidebar.text_area(
             "Temperature (°C)",
-            "28,24,20,16,12,4,-12,-40",
+            "28,24,20,16,12,8,4,0,-4,-8",
             height=80
         )
         dewpoint_input = st.sidebar.text_area(
             "Dewpoint (°C)",
-            "22,18,14,10,6,-2,-20,-50",
+            "22,18,14,10,6,2,-2,-6,-10,-14",
             height=80
         )
         
@@ -399,7 +423,7 @@ pressure,temperature,dewpoint
         st.dataframe(
             pd.DataFrame(comparison_data),
             hide_index=True,
-            use_container_width=True
+            width="stretch"
         )
     
     with tab3:
@@ -429,8 +453,8 @@ pressure,temperature,dewpoint
             'indices': indices.to_dict(),
             'risk_assessment': assessment.to_dict(),
             'data_quality': {
-                'n_points': validation['n_points'],
-                'quality_score': validation['quality_score'],
+                'n_points': int(validation['n_points']),
+                'quality_score': int(validation['quality_score']),
                 'warnings': validation['warnings']
             }
         }
