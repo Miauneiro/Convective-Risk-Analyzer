@@ -1,6 +1,6 @@
 # Convective Risk Analyzer
 
-**[🔴 Live Demo](https://convective-risk-analyzer.streamlit.app)** *(Deploy after setup)*
+**[🔴 Live Demo](https://convective-risk-analyzer.streamlit.app)** 
 
 This project provides real-time convective potential assessment for aviation safety operations. Using atmospheric sounding data and MetPy thermodynamic calculations, it computes CAPE (Convective Available Potential Energy) and CIN (Convective Inhibition) to evaluate severe weather risk across multiple aviation stakeholder categories.
 
