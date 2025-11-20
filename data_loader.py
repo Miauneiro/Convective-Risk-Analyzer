@@ -57,11 +57,22 @@ class SoundingLoader:
         """
         lines = text_content.strip().split('\n')
         
-        # Skip header lines (usually first 5-7 lines)
+        # Skip header lines - find the units line (contains "hPa")
         data_start = 0
         for i, line in enumerate(lines):
-            if 'PRES' in line or 'hPa' in line:
-                data_start = i + 1
+            if 'hPa' in line and 'deg' in line:  # Units line has both
+                # Found units line, find first data line after it
+                for j in range(i + 1, len(lines)):
+                    stripped = lines[j].strip()
+                    # Skip blank lines
+                    if not stripped:
+                        continue
+                    # Skip lines that are all dashes
+                    if stripped.replace('-', '').replace(' ', '') == '':
+                        continue
+                    # This is the first real data line
+                    data_start = j
+                    break
                 break
         
         if data_start == 0:
@@ -73,11 +84,10 @@ class SoundingLoader:
         
         data_lines = lines[data_start:]
         
-        # Parse data
+        # Parse data - let pandas auto-detect all columns
         df = pd.read_fwf(
             StringIO('\n'.join(data_lines)),
-            usecols=[0, 1, 2, 3, 6, 7],
-            names=['pressure', 'height', 'temperature', 'dewpoint', 'direction', 'speed']
+            names=['pressure', 'height', 'temperature', 'dewpoint', 'relh', 'mixr', 'direction', 'speed', 'theta', 'thte', 'thtv']
         )
         
         df = df.dropna(subset=('temperature', 'dewpoint'), how='all').reset_index(drop=True)
@@ -326,7 +336,7 @@ def load_example_sounding(risk_level: str = "high") -> SoundingData:
     Load example sounding data for testing
     
     Args:
-        risk_level: "low", "moderate", or "high" risk scenario
+        risk_level: "low", "moderate", "high", or "extreme" risk scenario
     
     Returns:
         SoundingData object with atmospheric profile from Wyoming format files
@@ -335,7 +345,8 @@ def load_example_sounding(risk_level: str = "high") -> SoundingData:
     file_map = {
         "low": "data/low_risk_example.txt",
         "moderate": "data/moderate_risk_example.txt",
-        "high": "data/high_risk_example.txt"
+        "high": "data/high_risk_example.txt",
+        "extreme": "data/extreme_risk_example.txt"
     }
     
     filepath = file_map.get(risk_level, "data/moderate_risk_example.txt")
