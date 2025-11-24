@@ -310,5 +310,5 @@ MIT License - See LICENSE file for details.
 ---
 
 **Author:** João - Meteorology Student | Data Science Portfolio Project  
-**Contact:** https://github.com/Miauneiro | https://www.linkedin.com/in/joão-manero 
+**Contact:** https://github.com/Miauneiro | https://www.linkedin.com/in/joão-manero
 **Part of data science career transition portfolio focusing on remote-first opportunities**
